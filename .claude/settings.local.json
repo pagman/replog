@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(dir /a nul)",
+      "Bash(if exist nul echo File exists)",
+      "Bash(powershell -Command \"Remove-Item -LiteralPath ''.\\\\nul'' -Force\")",
+      "Bash(git clean:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
