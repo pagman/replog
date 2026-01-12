@@ -6,7 +6,10 @@
       "Bash(if exist nul echo File exists)",
       "Bash(powershell -Command \"Remove-Item -LiteralPath ''.\\\\nul'' -Force\")",
       "Bash(git clean:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(vercel env add:*)"
     ]
   }
 }
