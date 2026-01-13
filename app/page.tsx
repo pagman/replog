@@ -12,6 +12,7 @@ export default function Home() {
     password: "",
     name: ""
   })
+  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -26,6 +27,7 @@ export default function Home() {
         const result = await signIn("credentials", {
           email: formData.email,
           password: formData.password,
+          rememberMe: rememberMe,
           redirect: false,
         })
 
@@ -153,6 +155,21 @@ export default function Home() {
               minLength={6}
             />
           </div>
+
+          {isLogin && (
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+              />
+              <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700 cursor-pointer">
+                Remember me for 30 days
+              </label>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
