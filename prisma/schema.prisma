@@ -55,9 +55,11 @@ model Program {
   name        String
   description String?
   userId      String     @db.ObjectId
+  sharedById  String?    @db.ObjectId
+  sharedByName String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  
+
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   exercises   Exercise[]
   workouts    Workout[]

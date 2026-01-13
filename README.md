@@ -17,6 +17,9 @@ A modern, full-stack gym tracking application built with Next.js 15, TypeScript,
 - **Previous Workout Data** - See your last workout's weights and reps to beat your personal records
 - **Quick Copy** - One-click to copy weights from your previous workout
 - **Program Management** - Edit and delete workout programs
+- **Program Sharing** - Share your workout programs with other users via email
+- **Resume Workouts** - Automatically saves workout progress and allows you to resume unfinished sessions
+- **Progressive Web App (PWA)** - Install on your device and use like a native app, works offline
 - **Responsive Design** - Works perfectly on desktop, tablet, and mobile
 
 ### User Experience
@@ -26,6 +29,8 @@ A modern, full-stack gym tracking application built with Next.js 15, TypeScript,
 - ✅ Protected routes (authentication required)
 - ✅ Intuitive navigation
 - ✅ Visual feedback (completed sets turn green)
+- ✅ Workout progress persistence (auto-save to localStorage)
+- ✅ Installable as a PWA on mobile and desktop
 
 ## 🛠️ Tech Stack
 
@@ -157,13 +162,33 @@ Open [http://localhost:3000](http://localhost:3000) in your browser!
 
 ### Daily Workflow
 
-1. Open RepLog
+1. Open RepLog (or launch the PWA from your home screen)
 2. Click "Start Workout" on the program you want to do
 3. You'll see your previous workout data (weights and reps)
 4. Use "Copy Last" buttons to quickly fill in weights
 5. Log your actual performance
-6. Complete the workout
-7. View your history on the dashboard
+6. Complete the workout (or close the app - your progress is auto-saved!)
+7. Resume unfinished workouts from the dashboard
+8. View your history on the dashboard
+
+### Additional Features
+
+**Share Programs:**
+1. Click the three-dot menu on any program
+2. Select "Share"
+3. Enter the recipient's email address
+4. They'll receive a copy they can use and modify
+
+**Resume Workouts:**
+- If you close the app during a workout, your progress is automatically saved
+- Programs with unfinished workouts show an "In Progress" badge
+- Click "Resume Workout" to continue where you left off
+- Unfinished workouts older than 24 hours are automatically cleaned up
+
+**Install as PWA:**
+1. On mobile: Use your browser's "Add to Home Screen" option
+2. On desktop: Look for the install icon in your browser's address bar
+3. Access RepLog like a native app with offline support
 
 ## 📁 Project Structure
 
@@ -203,11 +228,15 @@ replog/
 ### Collections
 
 - **User** - User accounts with hashed passwords
-- **Program** - Workout programs (belongs to User)
+- **Program** - Workout programs (belongs to User, includes sharing metadata)
 - **Exercise** - Exercises within programs
 - **Workout** - Logged workout sessions
 - **WorkoutSet** - Individual sets with weight/reps
 - **Account** & **Session** - NextAuth authentication
+
+**Program Sharing Fields:**
+- `sharedById` - ID of the user who shared the program
+- `sharedByName` - Name of the user who shared the program (for attribution)
 
 ### Key Relationships
 
@@ -256,7 +285,10 @@ Works on any platform that supports Next.js:
 Ideas for expanding RepLog:
 
 ### Short-term
-- [ ] Edit existing programs
+- [x] Edit existing programs ✅
+- [x] Program sharing ✅
+- [x] Resume workouts ✅
+- [x] PWA support ✅
 - [ ] View detailed workout history per exercise
 - [ ] Progress charts (weight over time)
 - [ ] Rest timer between sets
@@ -266,10 +298,9 @@ Ideas for expanding RepLog:
 ### Medium-term
 - [ ] Personal records tracking
 - [ ] Body measurements and progress photos
-- [ ] Workout templates (share with friends)
 - [ ] Dark mode
-- [ ] Mobile app (React Native)
 - [ ] Workout reminders/notifications
+- [ ] Push notifications for PWA
 
 ### Long-term
 - [ ] Social features (follow friends, share workouts)
