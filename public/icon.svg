@@ -1,7 +1,40 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="128" fill="#2563eb"/>
-  <path d="M160 200h60v112h-60V200zm132 0h60v112h-60V200z" fill="white"/>
-  <path d="M220 246h72v20h-72v-20z" fill="white"/>
-  <circle cx="190" cy="256" r="20" fill="white"/>
-  <circle cx="322" cy="256" r="20" fill="white"/>
+  <!-- Purple gradient background matching the app theme -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9333ea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded rectangle background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGradient)"/>
+
+  <!-- Flexed bicep arm (left side) -->
+  <path d="M140 280 Q120 240 140 200 L180 200 Q200 240 180 280 Z" fill="#FBBF24" stroke="#F59E0B" stroke-width="4"/>
+
+  <!-- Flexed bicep arm (right side) -->
+  <path d="M372 280 Q392 240 372 200 L332 200 Q312 240 332 280 Z" fill="#FBBF24" stroke="#F59E0B" stroke-width="4"/>
+
+  <!-- Left muscle bulge -->
+  <circle cx="160" cy="220" r="28" fill="#FCD34D"/>
+  <circle cx="160" cy="220" r="20" fill="#FDE68A"/>
+
+  <!-- Right muscle bulge -->
+  <circle cx="352" cy="220" r="28" fill="#FCD34D"/>
+  <circle cx="352" cy="220" r="20" fill="#FDE68A"/>
+
+  <!-- Center dumbbell bar -->
+  <rect x="190" y="235" width="132" height="22" rx="11" fill="#64748B"/>
+
+  <!-- Left dumbbell weight -->
+  <rect x="165" y="220" width="30" height="52" rx="8" fill="#334155"/>
+  <rect x="170" y="225" width="20" height="42" rx="4" fill="#475569"/>
+
+  <!-- Right dumbbell weight -->
+  <rect x="317" y="220" width="30" height="52" rx="8" fill="#334155"/>
+  <rect x="322" y="225" width="20" height="42" rx="4" fill="#475569"/>
+
+  <!-- Text "RL" for RepLog -->
+  <text x="256" y="380" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white" text-anchor="middle">RL</text>
 </svg>
