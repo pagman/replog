@@ -87,30 +87,30 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-zinc-50">
         <Navbar />
-        
+
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-            <p className="text-gray-600">Manage your workout programs and track your progress</p>
+            <h1 className="text-3xl font-bold text-zinc-900 mb-2">Dashboard</h1>
+            <p className="text-zinc-600">Manage your workout programs and track your progress</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* Programs Section */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">My Programs</h2>
+                <h2 className="text-2xl font-bold text-zinc-900">My Programs</h2>
                 <Link
                   href="/programs/new"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                  className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
                 >
                   + New Program
                 </Link>
               </div>
 
               {programs.length === 0 ? (
-                <div className="bg-white rounded-lg shadow p-6 text-center text-gray-500">
+                <div className="bg-white rounded-lg shadow p-6 text-center text-zinc-500">
                   No programs yet. Create your first workout program!
                 </div>
               ) : (
@@ -122,31 +122,31 @@ export default function Dashboard() {
                     >
                       <div className="flex justify-between items-start mb-3">
                         <div>
-                          <h3 className="text-xl font-semibold text-gray-800">
+                          <h3 className="text-xl font-semibold text-zinc-900">
                             {program.name}
                           </h3>
                           {program.description && (
-                            <p className="text-gray-600 text-sm mt-1">
+                            <p className="text-zinc-600 text-sm mt-1">
                               {program.description}
                             </p>
                           )}
                         </div>
                       </div>
-                      
-                      <div className="text-sm text-gray-500 mb-4">
+
+                      <div className="text-sm text-zinc-500 mb-4">
                         {program.exercises.length} exercises
                       </div>
 
                       <div className="flex gap-2">
                         <Link
                           href={`/workout/${program.id}`}
-                          className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-center"
+                          className="flex-1 bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600 transition text-center"
                         >
                           Start Workout
                         </Link>
                         <button
                           onClick={() => deleteProgram(program.id)}
-                          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+                          className="bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600 transition"
                         >
                           Delete
                         </button>
@@ -159,12 +159,12 @@ export default function Dashboard() {
 
             {/* Recent Workouts Section */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl font-bold text-zinc-900 mb-4">
                 Recent Workouts
               </h2>
 
               {recentWorkouts.length === 0 ? (
-                <div className="bg-white rounded-lg shadow p-6 text-center text-gray-500">
+                <div className="bg-white rounded-lg shadow p-6 text-center text-zinc-500">
                   No workouts logged yet. Start your first workout!
                 </div>
               ) : (
@@ -176,10 +176,10 @@ export default function Dashboard() {
                     >
                       <div className="flex justify-between items-center">
                         <div>
-                          <h3 className="font-semibold text-gray-800">
+                          <h3 className="font-semibold text-zinc-900">
                             {workout.program.name}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-zinc-500">
                             {new Date(workout.date).toLocaleDateString('en-US', {
                               weekday: 'short',
                               year: 'numeric',

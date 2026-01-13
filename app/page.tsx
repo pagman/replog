@@ -75,21 +75,21 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">RepLog 💪</h1>
-          <p className="text-gray-600">Track your fitness journey</p>
+          <h1 className="text-4xl font-bold text-zinc-900 mb-2">RepLog 💪</h1>
+          <p className="text-zinc-600">Track your fitness journey</p>
         </div>
 
-        <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+        <div className="flex mb-6 bg-zinc-100 rounded-lg p-1">
           <button
             type="button"
             onClick={() => setIsLogin(true)}
             className={`flex-1 py-2 rounded-md transition ${
               isLogin
-                ? "bg-blue-600 text-white"
-                : "text-gray-600 hover:text-gray-800"
+                ? "bg-purple-600 text-white"
+                : "text-zinc-600 hover:text-zinc-800"
             }`}
           >
             Login
@@ -99,8 +99,8 @@ export default function Home() {
             onClick={() => setIsLogin(false)}
             className={`flex-1 py-2 rounded-md transition ${
               !isLogin
-                ? "bg-blue-600 text-white"
-                : "text-gray-600 hover:text-gray-800"
+                ? "bg-purple-600 text-white"
+                : "text-zinc-600 hover:text-zinc-800"
             }`}
           >
             Sign Up
@@ -110,7 +110,7 @@ export default function Home() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-zinc-700 mb-1">
                 Name
               </label>
               <input
@@ -119,14 +119,14 @@ export default function Home() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-zinc-900"
                 required={!isLogin}
               />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-zinc-700 mb-1">
               Email
             </label>
             <input
@@ -135,13 +135,13 @@ export default function Home() {
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-zinc-900"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-zinc-700 mb-1">
               Password
             </label>
             <input
@@ -150,7 +150,7 @@ export default function Home() {
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+              className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-zinc-900"
               required
               minLength={6}
             />
@@ -163,9 +163,9 @@ export default function Home() {
                 id="rememberMe"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-zinc-300 rounded cursor-pointer"
               />
-              <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700 cursor-pointer">
+              <label htmlFor="rememberMe" className="ml-2 block text-sm text-zinc-700 cursor-pointer">
                 Remember me for 30 days
               </label>
             </div>
@@ -180,7 +180,7 @@ export default function Home() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
             {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
           </button>

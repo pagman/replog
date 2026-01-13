@@ -191,28 +191,28 @@ export default function WorkoutPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-zinc-50">
         <Navbar />
-        
+
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="mb-6">
             <button
               onClick={() => router.push("/dashboard")}
-              className="text-blue-600 hover:text-blue-800 mb-4"
+              className="text-purple-600 hover:text-purple-800 mb-4"
             >
               ← Back to Dashboard
             </button>
-            
+
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              <h1 className="text-3xl font-bold text-zinc-900 mb-2">
                 {program.name}
               </h1>
-              <p className="text-gray-600">
+              <p className="text-zinc-600">
                 Log your sets, reps, and weights for each exercise
               </p>
               {previousWorkout && (
-                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p className="text-sm text-blue-800">
+                <div className="mt-3 p-3 bg-cyan-50 border border-cyan-200 rounded">
+                  <p className="text-sm text-cyan-800">
                     📊 Last workout: {new Date(previousWorkout.date).toLocaleDateString('en-US', {
                       weekday: 'short',
                       month: 'short',
@@ -227,10 +227,10 @@ export default function WorkoutPage() {
           <div className="space-y-6">
             {exerciseGroups.map((group, groupIndex) => (
               <div key={groupIndex} className="bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                <h2 className="text-xl font-bold text-zinc-900 mb-4">
                   {group.exercise.name}
                 </h2>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-zinc-600 mb-4">
                   Target: {group.exercise.sets} sets × {group.exercise.reps} reps
                 </p>
 
@@ -240,14 +240,14 @@ export default function WorkoutPage() {
                       s => s.exerciseName === set.exerciseName && s.setNumber === set.setNumber
                     )
                     const previousSet = getPreviousSetData(set.exerciseName, set.setNumber)
-                    
+
                     return (
                       <div
                         key={setIndex}
                         className={`border rounded-lg p-4 transition ${
                           set.completed
                             ? 'border-green-400 bg-green-50'
-                            : 'border-gray-200'
+                            : 'border-zinc-200'
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -258,7 +258,7 @@ export default function WorkoutPage() {
                               className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition ${
                                 set.completed
                                   ? 'border-green-500 bg-green-500 text-white'
-                                  : 'border-gray-300 hover:border-blue-500'
+                                  : 'border-zinc-300 hover:border-purple-500'
                               }`}
                             >
                               {set.completed && '✓'}
@@ -267,23 +267,23 @@ export default function WorkoutPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="mb-2">
-                              <span className="text-sm font-medium text-gray-700">
+                              <span className="text-sm font-medium text-zinc-700">
                                 Set {set.setNumber}
                               </span>
                             </div>
 
                             <div className="space-y-3 mb-3">
                               <div>
-                                <label className="block text-xs text-gray-600 mb-1">
+                                <label className="block text-xs text-zinc-600 mb-1">
                                   Reps {previousSet && (
-                                    <span className="text-blue-600">(Last: {previousSet.reps})</span>
+                                    <span className="text-cyan-600">(Last: {previousSet.reps})</span>
                                   )}
                                 </label>
                                 <div className="flex items-center gap-2 w-full">
                                   <button
                                     type="button"
                                     onClick={() => updateSet(absoluteIndex, "reps", Math.max(0, set.reps - 1))}
-                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 border border-zinc-300 rounded text-zinc-700 font-bold text-lg"
                                   >
                                     −
                                   </button>
@@ -291,30 +291,30 @@ export default function WorkoutPage() {
                                     type="number"
                                     value={set.reps === 0 ? '' : set.reps}
                                     onChange={(e) => updateSet(absoluteIndex, "reps", e.target.value === '' ? 0 : parseInt(e.target.value))}
-                                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-center text-lg"
+                                    className="min-w-0 flex-1 px-3 py-2 border border-zinc-300 rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent text-zinc-900 text-center text-lg"
                                     min="0"
                                     placeholder="0"
                                   />
                                   <button
                                     type="button"
                                     onClick={() => updateSet(absoluteIndex, "reps", set.reps + 1)}
-                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 border border-zinc-300 rounded text-zinc-700 font-bold text-lg"
                                   >
                                     +
                                   </button>
                                 </div>
                               </div>
                               <div>
-                                <label className="block text-xs text-gray-600 mb-1">
+                                <label className="block text-xs text-zinc-600 mb-1">
                                   Weight (kg/lbs) {previousSet && (
-                                    <span className="text-blue-600">(Last: {previousSet.weight})</span>
+                                    <span className="text-cyan-600">(Last: {previousSet.weight})</span>
                                   )}
                                 </label>
                                 <div className="flex items-center gap-2 w-full">
                                   <button
                                     type="button"
                                     onClick={() => updateSet(absoluteIndex, "weight", Math.max(0, set.weight - 5))}
-                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 border border-zinc-300 rounded text-zinc-700 font-bold text-lg"
                                   >
                                     −
                                   </button>
@@ -322,7 +322,7 @@ export default function WorkoutPage() {
                                     type="number"
                                     value={set.weight === 0 ? '' : set.weight}
                                     onChange={(e) => updateSet(absoluteIndex, "weight", e.target.value === '' ? 0 : parseFloat(e.target.value))}
-                                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-center text-lg"
+                                    className="min-w-0 flex-1 px-3 py-2 border border-zinc-300 rounded focus:ring-2 focus:ring-purple-500 focus:border-transparent text-zinc-900 text-center text-lg"
                                     min="0"
                                     step="0.5"
                                     placeholder="0"
@@ -330,7 +330,7 @@ export default function WorkoutPage() {
                                   <button
                                     type="button"
                                     onClick={() => updateSet(absoluteIndex, "weight", set.weight + 5)}
-                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 border border-zinc-300 rounded text-zinc-700 font-bold text-lg"
                                   >
                                     +
                                   </button>
@@ -342,7 +342,7 @@ export default function WorkoutPage() {
                               <button
                                 type="button"
                                 onClick={() => copyPreviousWeight(absoluteIndex, set.exerciseName, set.setNumber)}
-                                className="w-full text-xs bg-blue-100 text-blue-700 px-3 py-2 rounded hover:bg-blue-200 transition"
+                                className="w-full text-xs bg-cyan-100 text-cyan-700 px-3 py-2 rounded hover:bg-cyan-200 transition"
                               >
                                 Copy Last
                               </button>
@@ -357,13 +357,13 @@ export default function WorkoutPage() {
             ))}
 
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-xl font-bold text-zinc-900 mb-4">
                 Workout Notes (Optional)
               </h2>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-zinc-900"
                 rows={4}
                 placeholder="How did the workout feel? Any observations?"
               />
@@ -374,7 +374,7 @@ export default function WorkoutPage() {
                 <button
                   type="button"
                   onClick={() => router.push("/dashboard")}
-                  className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition font-medium"
+                  className="flex-1 bg-zinc-200 text-zinc-800 py-3 rounded-lg hover:bg-zinc-300 transition font-medium"
                 >
                   Cancel
                 </button>
@@ -382,7 +382,7 @@ export default function WorkoutPage() {
                   type="button"
                   onClick={handleSaveWorkout}
                   disabled={saving}
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                  className="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
                   {saving ? "Saving..." : "Complete Workout"}
                 </button>
