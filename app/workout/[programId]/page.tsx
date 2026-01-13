@@ -47,10 +47,23 @@ export default function WorkoutPage() {
   const [notes, setNotes] = useState("")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [hasResumedProgress, setHasResumedProgress] = useState(false)
 
   useEffect(() => {
     fetchData()
   }, [params.programId])
+
+  // Save workout progress to localStorage whenever it changes
+  useEffect(() => {
+    if (program && workoutSets.length > 0) {
+      const progressData = {
+        sets: workoutSets,
+        notes,
+        timestamp: Date.now()
+      }
+      localStorage.setItem(`workout-progress-${params.programId}`, JSON.stringify(progressData))
+    }
+  }, [workoutSets, notes, params.programId, program])
 
   const fetchData = async () => {
     try {
@@ -89,8 +102,31 @@ export default function WorkoutPage() {
   }
 
   const initializeWorkoutSets = (program: Program) => {
+    // Check for saved progress first
+    const savedProgress = localStorage.getItem(`workout-progress-${params.programId}`)
+
+    if (savedProgress) {
+      try {
+        const { sets, notes: savedNotes, timestamp } = JSON.parse(savedProgress)
+        // Only restore if the saved progress is less than 24 hours old
+        const hoursSinceSave = (Date.now() - timestamp) / (1000 * 60 * 60)
+        if (hoursSinceSave < 24) {
+          setWorkoutSets(sets)
+          setNotes(savedNotes || "")
+          setHasResumedProgress(true)
+          return
+        } else {
+          // Clear old saved progress
+          localStorage.removeItem(`workout-progress-${params.programId}`)
+        }
+      } catch (error) {
+        console.error("Error loading saved progress:", error)
+      }
+    }
+
+    // Initialize fresh workout sets if no saved progress
     const sets: WorkoutSet[] = []
-    
+
     program.exercises.forEach((exercise) => {
       for (let i = 1; i <= exercise.sets; i++) {
         sets.push({
@@ -102,7 +138,7 @@ export default function WorkoutPage() {
         })
       }
     })
-    
+
     setWorkoutSets(sets)
   }
 
@@ -134,6 +170,37 @@ export default function WorkoutPage() {
     }
   }
 
+  const handleDiscardProgress = () => {
+    if (confirm("Are you sure you want to discard your saved progress and start fresh?")) {
+      localStorage.removeItem(`workout-progress-${params.programId}`)
+      setHasResumedProgress(false)
+      if (program) {
+        initializeWorkoutSets(program)
+        setNotes("")
+      }
+    }
+  }
+
+  const handleCancel = () => {
+    // Check if there's any progress to lose
+    const hasProgress = workoutSets.some(set => set.completed || set.weight > 0)
+
+    if (hasProgress) {
+      // Ask user if they want to keep progress or discard it
+      const shouldDiscard = confirm(
+        "Do you want to discard your workout progress?\n\n" +
+        "• Click OK to discard progress and return to dashboard\n" +
+        "• Click Cancel to keep progress saved and return to dashboard"
+      )
+
+      if (shouldDiscard) {
+        localStorage.removeItem(`workout-progress-${params.programId}`)
+      }
+    }
+
+    router.push("/dashboard")
+  }
+
   const handleSaveWorkout = async () => {
     if (workoutSets.some(set => set.weight === 0)) {
       if (!confirm("Some sets have 0 weight. Continue saving?")) {
@@ -158,6 +225,8 @@ export default function WorkoutPage() {
       })
 
       if (response.ok) {
+        // Clear saved progress after successful save
+        localStorage.removeItem(`workout-progress-${params.programId}`)
         router.push("/dashboard")
       } else {
         alert("Failed to save workout")
@@ -210,6 +279,21 @@ export default function WorkoutPage() {
               <p className="text-zinc-600">
                 Log your sets, reps, and weights for each exercise
               </p>
+              {hasResumedProgress && (
+                <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-green-800 font-medium">
+                      ✓ Workout progress restored - picking up where you left off!
+                    </p>
+                    <button
+                      onClick={handleDiscardProgress}
+                      className="text-xs text-green-700 hover:text-green-900 underline"
+                    >
+                      Start Fresh
+                    </button>
+                  </div>
+                </div>
+              )}
               {previousWorkout && (
                 <div className="mt-3 p-3 bg-cyan-50 border border-cyan-200 rounded">
                   <p className="text-sm text-cyan-800">
@@ -373,7 +457,7 @@ export default function WorkoutPage() {
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={handleCancel}
                   className="flex-1 bg-zinc-200 text-zinc-800 py-3 rounded-lg hover:bg-zinc-300 transition font-medium"
                 >
                   Cancel

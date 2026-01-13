@@ -35,10 +35,42 @@ export default function Dashboard() {
   const [programs, setPrograms] = useState<Program[]>([])
   const [recentWorkouts, setRecentWorkouts] = useState<Workout[]>([])
   const [loading, setLoading] = useState(true)
+  const [unfinishedWorkouts, setUnfinishedWorkouts] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchData()
+    checkUnfinishedWorkouts()
   }, [])
+
+  const checkUnfinishedWorkouts = () => {
+    const unfinished = new Set<string>()
+
+    // Check localStorage for any saved workout progress
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key?.startsWith('workout-progress-')) {
+        const programId = key.replace('workout-progress-', '')
+        try {
+          const savedProgress = localStorage.getItem(key)
+          if (savedProgress) {
+            const { timestamp } = JSON.parse(savedProgress)
+            // Only count if less than 24 hours old
+            const hoursSinceSave = (Date.now() - timestamp) / (1000 * 60 * 60)
+            if (hoursSinceSave < 24) {
+              unfinished.add(programId)
+            } else {
+              // Clean up old progress
+              localStorage.removeItem(key)
+            }
+          }
+        } catch (error) {
+          console.error('Error checking saved progress:', error)
+        }
+      }
+    }
+
+    setUnfinishedWorkouts(unfinished)
+  }
 
   const fetchData = async () => {
     try {
@@ -72,6 +104,13 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Error deleting program:", error)
+    }
+  }
+
+  const discardWorkoutProgress = (programId: string) => {
+    if (confirm("Are you sure you want to discard this workout in progress?")) {
+      localStorage.removeItem(`workout-progress-${programId}`)
+      checkUnfinishedWorkouts()
     }
   }
 
@@ -115,44 +154,70 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {programs.map((program) => (
-                    <div
-                      key={program.id}
-                      className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
-                    >
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="text-xl font-semibold text-zinc-900">
-                            {program.name}
-                          </h3>
-                          {program.description && (
-                            <p className="text-zinc-600 text-sm mt-1">
-                              {program.description}
-                            </p>
+                  {programs.map((program) => {
+                    const hasUnfinishedWorkout = unfinishedWorkouts.has(program.id)
+
+                    return (
+                      <div
+                        key={program.id}
+                        className={`bg-white rounded-lg shadow p-6 hover:shadow-lg transition ${
+                          hasUnfinishedWorkout ? 'ring-2 ring-orange-400' : ''
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-xl font-semibold text-zinc-900">
+                                {program.name}
+                              </h3>
+                              {hasUnfinishedWorkout && (
+                                <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
+                                  In Progress
+                                </span>
+                              )}
+                            </div>
+                            {program.description && (
+                              <p className="text-zinc-600 text-sm mt-1">
+                                {program.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-sm text-zinc-500 mb-4">
+                          {program.exercises.length} exercises
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Link
+                            href={`/workout/${program.id}`}
+                            className={`flex-1 px-4 py-2 rounded transition text-center font-medium ${
+                              hasUnfinishedWorkout
+                                ? 'bg-orange-500 text-white hover:bg-orange-600'
+                                : 'bg-cyan-500 text-white hover:bg-cyan-600'
+                            }`}
+                          >
+                            {hasUnfinishedWorkout ? 'Resume Workout' : 'Start Workout'}
+                          </Link>
+                          {hasUnfinishedWorkout && (
+                            <button
+                              onClick={() => discardWorkoutProgress(program.id)}
+                              className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 transition"
+                              title="Discard workout in progress"
+                            >
+                              Discard
+                            </button>
                           )}
+                          <button
+                            onClick={() => deleteProgram(program.id)}
+                            className="bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600 transition"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
-
-                      <div className="text-sm text-zinc-500 mb-4">
-                        {program.exercises.length} exercises
-                      </div>
-
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/workout/${program.id}`}
-                          className="flex-1 bg-cyan-500 text-white px-4 py-2 rounded hover:bg-cyan-600 transition text-center"
-                        >
-                          Start Workout
-                        </Link>
-                        <button
-                          onClick={() => deleteProgram(program.id)}
-                          className="bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600 transition"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
