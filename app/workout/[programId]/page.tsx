@@ -250,8 +250,8 @@ export default function WorkoutPage() {
                             : 'border-gray-200'
                         }`}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className="flex-shrink-0">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 pt-7">
                             <button
                               type="button"
                               onClick={() => toggleSetComplete(absoluteIndex)}
@@ -265,53 +265,89 @@ export default function WorkoutPage() {
                             </button>
                           </div>
 
-                          <div className="flex-shrink-0 w-16">
-                            <span className="text-sm font-medium text-gray-700">
-                              Set {set.setNumber}
-                            </span>
-                          </div>
-
-                          <div className="flex-1 grid grid-cols-2 gap-3">
-                            <div>
-                              <label className="block text-xs text-gray-600 mb-1">
-                                Reps {previousSet && (
-                                  <span className="text-blue-600">(Last: {previousSet.reps})</span>
-                                )}
-                              </label>
-                              <input
-                                type="number"
-                                value={set.reps}
-                                onChange={(e) => updateSet(absoluteIndex, "reps", parseInt(e.target.value) || 0)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                min="0"
-                              />
+                          <div className="flex-1 min-w-0">
+                            <div className="mb-2">
+                              <span className="text-sm font-medium text-gray-700">
+                                Set {set.setNumber}
+                              </span>
                             </div>
-                            <div>
-                              <label className="block text-xs text-gray-600 mb-1">
-                                Weight (kg/lbs) {previousSet && (
-                                  <span className="text-blue-600">(Last: {previousSet.weight})</span>
-                                )}
-                              </label>
-                              <input
-                                type="number"
-                                value={set.weight}
-                                onChange={(e) => updateSet(absoluteIndex, "weight", parseFloat(e.target.value) || 0)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                min="0"
-                                step="0.5"
-                              />
-                            </div>
-                          </div>
 
-                          {previousSet && (
-                            <button
-                              type="button"
-                              onClick={() => copyPreviousWeight(absoluteIndex, set.exerciseName, set.setNumber)}
-                              className="flex-shrink-0 text-xs bg-blue-100 text-blue-700 px-3 py-2 rounded hover:bg-blue-200 transition"
-                            >
-                              Copy Last
-                            </button>
-                          )}
+                            <div className="space-y-3 mb-3">
+                              <div>
+                                <label className="block text-xs text-gray-600 mb-1">
+                                  Reps {previousSet && (
+                                    <span className="text-blue-600">(Last: {previousSet.reps})</span>
+                                  )}
+                                </label>
+                                <div className="flex items-center gap-2 w-full">
+                                  <button
+                                    type="button"
+                                    onClick={() => updateSet(absoluteIndex, "reps", Math.max(0, set.reps - 1))}
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                  >
+                                    −
+                                  </button>
+                                  <input
+                                    type="number"
+                                    value={set.reps === 0 ? '' : set.reps}
+                                    onChange={(e) => updateSet(absoluteIndex, "reps", e.target.value === '' ? 0 : parseInt(e.target.value))}
+                                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-center text-lg"
+                                    min="0"
+                                    placeholder="0"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => updateSet(absoluteIndex, "reps", set.reps + 1)}
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                              <div>
+                                <label className="block text-xs text-gray-600 mb-1">
+                                  Weight (kg/lbs) {previousSet && (
+                                    <span className="text-blue-600">(Last: {previousSet.weight})</span>
+                                  )}
+                                </label>
+                                <div className="flex items-center gap-2 w-full">
+                                  <button
+                                    type="button"
+                                    onClick={() => updateSet(absoluteIndex, "weight", Math.max(0, set.weight - 5))}
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                  >
+                                    −
+                                  </button>
+                                  <input
+                                    type="number"
+                                    value={set.weight === 0 ? '' : set.weight}
+                                    onChange={(e) => updateSet(absoluteIndex, "weight", e.target.value === '' ? 0 : parseFloat(e.target.value))}
+                                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 text-center text-lg"
+                                    min="0"
+                                    step="0.5"
+                                    placeholder="0"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => updateSet(absoluteIndex, "weight", set.weight + 5)}
+                                    className="shrink-0 w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 active:bg-gray-300 border border-gray-300 rounded text-gray-700 font-bold text-lg"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {previousSet && (
+                              <button
+                                type="button"
+                                onClick={() => copyPreviousWeight(absoluteIndex, set.exerciseName, set.setNumber)}
+                                className="w-full text-xs bg-blue-100 text-blue-700 px-3 py-2 rounded hover:bg-blue-200 transition"
+                              >
+                                Copy Last
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )
