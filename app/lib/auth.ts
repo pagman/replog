@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id
         token.rememberMe = (user as any).rememberMe || false
@@ -69,6 +69,12 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as { id: string }).id = token.id as string
       }
+      // Set session maxAge based on token's rememberMe flag
+      if (token.rememberMe) {
+        session.expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      } else {
+        session.expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      }
       return session
     }
   },
@@ -77,10 +83,21 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days when remember me is checked
+    maxAge: 30 * 24 * 60 * 60, // 30 days maximum
   },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60, // 30 days maximum
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      }
+    }
   },
   secret: process.env.NEXTAUTH_SECRET,
 }

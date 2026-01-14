@@ -12,7 +12,20 @@
       "Bash(vercel env add:*)",
       "Bash(npx prisma:*)",
       "Bash(git rm:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c \"taskkill /F /IM node.exe\")",
+      "Bash(cmd /c \"del /F /Q \"\"C:\\\\NextJS Projects\\\\replog\\\\.next\\\\dev\\\\lock\"\"\")",
+      "Bash(cmd /c \"netstat -ano | findstr :3000\")",
+      "Bash(cmd /c \"taskkill /F /PID 18520\")",
+      "Bash(cmd /c \"rmdir /S /Q \"\"C:\\\\NextJS Projects\\\\replog\\\\.next\\\\dev\"\"\")",
+      "Bash(cmd /c \"del \"\"C:\\\\NextJS Projects\\\\replog\\\\nul\"\"\")",
+      "Bash(cmd /c \"del \\\\?\\\\C:\\\\NextJS Projects\\\\replog\\\\nul\")",
+      "Bash(powershell -Command \"Remove-Item -Path ''\\\\?\\\\C:\\\\NextJS Projects\\\\replog\\\\nul'' -Force\")",
+      "Bash(powershell -Command \"Remove-Item -LiteralPath ''\\\\?\\\\C:\\\\NextJS Projects\\\\replog\\\\nul'' -Force\")",
+      "Bash(cmd //c \"del /f /q nul\")",
+      "Bash(cmd /c \"cd /d \"\"C:\\\\NextJS Projects\\\\replog\"\" && ren nul deleteme && del deleteme\")"
     ]
   }
 }
