@@ -49,31 +49,35 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.rememberMe = (user as any).rememberMe || false
+        token.createdAt = Date.now()
+      }
 
-        // Set token expiration based on remember me
-        if ((user as any).rememberMe) {
-          // 30 days for remember me
-          token.exp = Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60)
-        } else {
-          // 1 day for regular login
-          token.exp = Math.floor(Date.now() / 1000) + (24 * 60 * 60)
+      // Check if token has expired based on rememberMe setting
+      if (token.createdAt) {
+        const maxAge = token.rememberMe
+          ? 30 * 24 * 60 * 60 * 1000  // 30 days
+          : 24 * 60 * 60 * 1000        // 1 day
+
+        if (Date.now() - (token.createdAt as number) > maxAge) {
+          // Token expired - return empty token to force re-login
+          return {} as typeof token
         }
       }
+
       return token
     },
     async session({ session, token }) {
+      // If token was invalidated (empty), return null session
+      if (!token.id) {
+        return { ...session, user: undefined }
+      }
+
       if (session.user) {
         (session.user as { id: string }).id = token.id as string
-      }
-      // Set session maxAge based on token's rememberMe flag
-      if (token.rememberMe) {
-        session.expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      } else {
-        session.expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       }
       return session
     }
@@ -90,15 +94,15 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: "next-auth.session-token",
       options: {
         httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 30 * 24 * 60 * 60, // 30 days - makes cookie persistent across browser restarts
-      }
-    }
+        sameSite: "lax" as const,
+        path: "/",
+        secure: false,
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+      },
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 }

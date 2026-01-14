@@ -1,11 +1,12 @@
 "use client"
 
-import { signIn } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Home() {
   const router = useRouter()
+  const { status } = useSession()
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
     email: "",
@@ -15,6 +16,27 @@ export default function Home() {
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/dashboard")
+    }
+  }, [status, router])
+
+  // Show loading while checking auth status
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    )
+  }
+
+  // Don't render login form if authenticated (will redirect)
+  if (status === "authenticated") {
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,7 +49,7 @@ export default function Home() {
         const result = await signIn("credentials", {
           email: formData.email,
           password: formData.password,
-          rememberMe: rememberMe,
+          rememberMe: String(rememberMe),
           redirect: false,
         })
 
