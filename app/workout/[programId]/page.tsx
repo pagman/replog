@@ -461,7 +461,7 @@ export default function WorkoutPage() {
                                 <div className="flex items-center gap-2 w-full">
                                   <button
                                     type="button"
-                                    onClick={() => updateSet(absoluteIndex, "weight", Math.max(0, set.weight - 5))}
+                                    onClick={() => updateSet(absoluteIndex, "weight", Math.max(0, set.weight -1))}
                                     className="shrink-0 w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 border border-zinc-300 rounded text-zinc-700 font-bold text-lg"
                                   >
                                     −
@@ -477,7 +477,7 @@ export default function WorkoutPage() {
                                   />
                                   <button
                                     type="button"
-                                    onClick={() => updateSet(absoluteIndex, "weight", set.weight + 5)}
+                                    onClick={() => updateSet(absoluteIndex, "weight", set.weight + 1)}
                                     className="shrink-0 w-10 h-10 flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 active:bg-zinc-300 border border-zinc-300 rounded text-zinc-700 font-bold text-lg"
                                   >
                                     +
