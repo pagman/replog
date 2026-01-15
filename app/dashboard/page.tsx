@@ -30,6 +30,7 @@ interface Workout {
     name: string
   }
   completed: boolean
+  duration?: number
 }
 
 export default function Dashboard() {
@@ -45,6 +46,8 @@ export default function Dashboard() {
   const [shareError, setShareError] = useState("")
   const [shareSuccess, setShareSuccess] = useState("")
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [workoutPage, setWorkoutPage] = useState(1)
+  const workoutsPerPage = 4
 
   useEffect(() => {
     fetchData()
@@ -105,7 +108,7 @@ export default function Dashboard() {
       const workoutsData = await workoutsRes.json()
 
       setPrograms(programsData)
-      setRecentWorkouts(workoutsData.slice(0, 5))
+      setRecentWorkouts(workoutsData)
     } catch (error) {
       console.error("Error fetching data:", error)
     } finally {
@@ -206,6 +209,25 @@ export default function Dashboard() {
     setOpenMenuId(null)
     deleteProgram(programId)
   }
+
+  const formatDuration = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`
+    }
+    if (minutes > 0) {
+      return `${minutes}m ${seconds}s`
+    }
+    return `${seconds}s`
+  }
+
+  // Pagination calculations
+  const totalPages = Math.ceil(recentWorkouts.length / workoutsPerPage)
+  const startIndex = (workoutPage - 1) * workoutsPerPage
+  const paginatedWorkouts = recentWorkouts.slice(startIndex, startIndex + workoutsPerPage)
 
   if (loading) {
     return (
@@ -356,10 +378,10 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Recent Workouts Section */}
+            {/* Workouts Section */}
             <div>
               <h2 className="text-2xl font-bold text-zinc-900 mb-4">
-                Recent Workouts
+                Workout History
               </h2>
 
               {recentWorkouts.length === 0 ? (
@@ -367,37 +389,67 @@ export default function Dashboard() {
                   No workouts logged yet. Start your first workout!
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {recentWorkouts.map((workout) => (
-                    <div
-                      key={workout.id}
-                      className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="font-semibold text-zinc-900">
-                            {workout.program.name}
-                          </h3>
-                          <p className="text-sm text-zinc-500">
-                            {new Date(workout.date).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                        <div className={`px-3 py-1 rounded-full text-sm ${
-                          workout.completed
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {workout.completed ? 'Completed' : 'In Progress'}
+                <>
+                  <div className="space-y-4">
+                    {paginatedWorkouts.map((workout) => (
+                      <div
+                        key={workout.id}
+                        className="bg-white rounded-lg shadow p-4 hover:shadow-lg transition"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="font-semibold text-zinc-900">
+                              {workout.program.name}
+                            </h3>
+                            <p className="text-sm text-zinc-500">
+                              {new Date(workout.date).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              })}
+                              {workout.duration && (
+                                <span className="ml-2 text-purple-600 font-medium">
+                                  {formatDuration(workout.duration)}
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                          <div className={`px-3 py-1 rounded-full text-sm ${
+                            workout.completed
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {workout.completed ? 'Completed' : 'In Progress'}
+                          </div>
                         </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination Controls */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-4">
+                      <button
+                        onClick={() => setWorkoutPage(p => Math.max(1, p - 1))}
+                        disabled={workoutPage === 1}
+                        className="px-3 py-1 rounded bg-zinc-200 text-zinc-700 hover:bg-zinc-300 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm text-zinc-600">
+                        Page {workoutPage} of {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setWorkoutPage(p => Math.min(totalPages, p + 1))}
+                        disabled={workoutPage === totalPages}
+                        className="px-3 py-1 rounded bg-zinc-200 text-zinc-700 hover:bg-zinc-300 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      >
+                        Next
+                      </button>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
             </div>
           </div>

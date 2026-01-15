@@ -48,6 +48,46 @@ export default function WorkoutPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [hasResumedProgress, setHasResumedProgress] = useState(false)
+  const [workoutStartTime, setWorkoutStartTime] = useState<number | null>(null)
+  const [elapsedTime, setElapsedTime] = useState(0)
+
+  // Initialize workout start time
+  useEffect(() => {
+    const savedStartTime = localStorage.getItem(`workout-start-${params.programId}`)
+    if (savedStartTime) {
+      setWorkoutStartTime(parseInt(savedStartTime))
+    } else {
+      const now = Date.now()
+      setWorkoutStartTime(now)
+      localStorage.setItem(`workout-start-${params.programId}`, now.toString())
+    }
+  }, [params.programId])
+
+  // Update elapsed time every second
+  useEffect(() => {
+    if (!workoutStartTime) return
+
+    const updateElapsed = () => {
+      setElapsedTime(Math.floor((Date.now() - workoutStartTime) / 1000))
+    }
+
+    updateElapsed()
+    const interval = setInterval(updateElapsed, 1000)
+
+    return () => clearInterval(interval)
+  }, [workoutStartTime])
+
+  // Format seconds to HH:MM:SS or MM:SS
+  const formatTime = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+    const seconds = totalSeconds % 60
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    }
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
 
   useEffect(() => {
     fetchData()
@@ -173,7 +213,12 @@ export default function WorkoutPage() {
   const handleDiscardProgress = () => {
     if (confirm("Are you sure you want to discard your saved progress and start fresh?")) {
       localStorage.removeItem(`workout-progress-${params.programId}`)
+      localStorage.removeItem(`workout-start-${params.programId}`)
       setHasResumedProgress(false)
+      // Reset timer
+      const now = Date.now()
+      setWorkoutStartTime(now)
+      localStorage.setItem(`workout-start-${params.programId}`, now.toString())
       if (program) {
         initializeWorkoutSets(program)
         setNotes("")
@@ -195,6 +240,7 @@ export default function WorkoutPage() {
 
       if (shouldDiscard) {
         localStorage.removeItem(`workout-progress-${params.programId}`)
+        localStorage.removeItem(`workout-start-${params.programId}`)
       }
     }
 
@@ -220,13 +266,15 @@ export default function WorkoutPage() {
           programId: params.programId,
           sets: workoutSets,
           notes,
-          completed: true
+          completed: true,
+          duration: elapsedTime
         }),
       })
 
       if (response.ok) {
-        // Clear saved progress after successful save
+        // Clear saved progress and timer after successful save
         localStorage.removeItem(`workout-progress-${params.programId}`)
+        localStorage.removeItem(`workout-start-${params.programId}`)
         router.push("/dashboard")
       } else {
         alert("Failed to save workout")
@@ -261,7 +309,23 @@ export default function WorkoutPage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-zinc-50">
-        <Navbar />
+        {/* Fixed Header - Navbar and Timer always visible at top */}
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar />
+          <div className="bg-purple-700 text-white py-2 shadow-md">
+            <div className="container mx-auto px-4 max-w-4xl flex items-center justify-center gap-3">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-lg font-semibold tabular-nums">
+                {formatTime(elapsedTime)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Spacer for fixed header (navbar h-16 + timer ~h-10) */}
+        <div className="h-[104px]"></div>
 
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="mb-6">

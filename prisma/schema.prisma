@@ -84,8 +84,9 @@ model Workout {
   userId      String        @db.ObjectId
   notes       String?
   completed   Boolean       @default(false)
+  duration    Int?          // Duration in seconds
   createdAt   DateTime      @default(now())
-  
+
   program     Program       @relation(fields: [programId], references: [id], onDelete: Cascade)
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   sets        WorkoutSet[]

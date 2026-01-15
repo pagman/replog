@@ -70,11 +70,12 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { programId, sets, notes, completed } = body as {
+    const { programId, sets, notes, completed, duration } = body as {
       programId: string
       sets: WorkoutSetInput[]
       notes?: string
       completed?: boolean
+      duration?: number
     }
 
     if (!programId || !sets || sets.length === 0) {
@@ -90,6 +91,7 @@ export async function POST(request: Request) {
         userId: session.user.id,
         notes,
         completed: completed || true,
+        duration,
         sets: {
           create: sets.map((set) => ({
             exerciseName: set.exerciseName,
