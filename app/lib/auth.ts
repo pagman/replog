@@ -63,15 +63,19 @@ export const authOptions: NextAuthOptions = {
           : 24 * 60 * 60 * 1000        // 1 day
 
         if (Date.now() - (token.createdAt as number) > maxAge) {
-          // Token expired - return empty token to force re-login
-          return {} as typeof token
+          // Token expired - mark as expired so client can handle gracefully
+          return { ...token, expired: true }
         }
       }
 
       return token
     },
     async session({ session, token }) {
-      // If token was invalidated (empty), return null session
+      // If token is expired, return session with expired flag
+      if (token.expired) {
+        return { ...session, user: undefined, expired: true }
+      }
+
       if (!token.id) {
         return { ...session, user: undefined }
       }

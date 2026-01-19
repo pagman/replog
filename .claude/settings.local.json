@@ -26,7 +26,10 @@
       "Bash(powershell -Command \"Remove-Item -LiteralPath ''\\\\?\\\\C:\\\\NextJS Projects\\\\replog\\\\nul'' -Force\")",
       "Bash(cmd //c \"del /f /q nul\")",
       "Bash(cmd /c \"cd /d \"\"C:\\\\NextJS Projects\\\\replog\"\" && ren nul deleteme && del deleteme\")",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(cd c:NextJS Projectsreplog)",
+      "Bash(cat:*)",
+      "Bash(find:*)"
     ]
   }
 }
