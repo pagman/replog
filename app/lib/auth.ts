@@ -56,11 +56,9 @@ export const authOptions: NextAuthOptions = {
         token.createdAt = Date.now()
       }
 
-      // Check if token has expired based on rememberMe setting
+      // Check if token has expired (30 days)
       if (token.createdAt) {
-        const maxAge = token.rememberMe
-          ? 30 * 24 * 60 * 60 * 1000  // 30 days
-          : 24 * 60 * 60 * 1000        // 1 day
+        const maxAge = 30 * 24 * 60 * 60 * 1000  // 30 days
 
         if (Date.now() - (token.createdAt as number) > maxAge) {
           // Token expired - mark as expired so client can handle gracefully

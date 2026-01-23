@@ -108,22 +108,20 @@ export default function Home() {
           <button
             type="button"
             onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 rounded-md transition ${
-              isLogin
+            className={`flex-1 py-2 rounded-md transition ${isLogin
                 ? "bg-purple-600 text-white"
                 : "text-zinc-600 hover:text-zinc-800"
-            }`}
+              }`}
           >
             Login
           </button>
           <button
             type="button"
             onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 rounded-md transition ${
-              !isLogin
+            className={`flex-1 py-2 rounded-md transition ${!isLogin
                 ? "bg-purple-600 text-white"
                 : "text-zinc-600 hover:text-zinc-800"
-            }`}
+              }`}
           >
             Sign Up
           </button>
@@ -188,7 +186,7 @@ export default function Home() {
                 className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-zinc-300 rounded cursor-pointer"
               />
               <label htmlFor="rememberMe" className="ml-2 block text-sm text-zinc-700 cursor-pointer">
-                Remember me for 30 days
+                Keep me logged in for 30 days
               </label>
             </div>
           )}
