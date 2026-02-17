@@ -55,7 +55,17 @@ export default function WorkoutPage() {
   useEffect(() => {
     const savedStartTime = localStorage.getItem(`workout-start-${params.programId}`)
     if (savedStartTime) {
-      setWorkoutStartTime(parseInt(savedStartTime))
+      const parsed = parseInt(savedStartTime)
+      const hoursSinceStart = (Date.now() - parsed) / (1000 * 60 * 60)
+      // Discard stale start times (matching the 24h progress expiry)
+      if (hoursSinceStart < 24) {
+        setWorkoutStartTime(parsed)
+      } else {
+        localStorage.removeItem(`workout-start-${params.programId}`)
+        const now = Date.now()
+        setWorkoutStartTime(now)
+        localStorage.setItem(`workout-start-${params.programId}`, now.toString())
+      }
     } else {
       const now = Date.now()
       setWorkoutStartTime(now)
@@ -330,7 +340,7 @@ export default function WorkoutPage() {
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="mb-6">
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={handleCancel}
               className="text-purple-600 hover:text-purple-800 mb-4"
             >
               ← Back to Dashboard
