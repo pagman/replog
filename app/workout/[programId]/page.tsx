@@ -133,16 +133,18 @@ export default function WorkoutPage() {
       const workoutsResponse = await fetch(`/api/workouts?programId=${params.programId}`)
       const workouts = await workoutsResponse.json()
 
+      let previousSets: PreviousSet[] = []
       if (workouts.length > 0) {
         // Get the most recent workout
         const lastWorkout = workouts[0]
+        previousSets = lastWorkout.sets
         setPreviousWorkout({
           date: lastWorkout.date,
-          sets: lastWorkout.sets
+          sets: previousSets
         })
       }
 
-      initializeWorkoutSets(found)
+      initializeWorkoutSets(found, previousSets)
     } catch (error) {
       console.error("Error fetching data:", error)
       router.push("/dashboard")
@@ -151,7 +153,7 @@ export default function WorkoutPage() {
     }
   }
 
-  const initializeWorkoutSets = (program: Program) => {
+  const initializeWorkoutSets = (program: Program, previousSets: PreviousSet[] = []) => {
     // Check for saved progress first
     const savedProgress = localStorage.getItem(`workout-progress-${params.programId}`)
 
@@ -179,23 +181,20 @@ export default function WorkoutPage() {
 
     program.exercises.forEach((exercise) => {
       for (let i = 1; i <= exercise.sets; i++) {
+        const prev = previousSets.find(
+          s => s.exerciseName === exercise.name && s.setNumber === i
+        )
         sets.push({
           exerciseName: exercise.name,
           setNumber: i,
-          reps: exercise.reps,
-          weight: 0,
+          reps: prev ? prev.reps : exercise.reps,
+          weight: prev ? prev.weight : 0,
           completed: false
         })
       }
     })
 
     setWorkoutSets(sets)
-  }
-
-  const getPreviousSetData = (exerciseName: string, setNumber: number): PreviousSet | undefined => {
-    return previousWorkout?.sets.find(
-      s => s.exerciseName === exerciseName && s.setNumber === setNumber
-    )
   }
 
   const updateSet = (index: number, field: keyof WorkoutSet, value: number | boolean) => {
@@ -208,16 +207,6 @@ export default function WorkoutPage() {
     const updated = [...workoutSets]
     updated[index].completed = !updated[index].completed
     setWorkoutSets(updated)
-  }
-
-  const copyPreviousWeight = (index: number, exerciseName: string, setNumber: number) => {
-    const previousSet = getPreviousSetData(exerciseName, setNumber)
-    if (previousSet) {
-      const updated = [...workoutSets]
-      updated[index].weight = previousSet.weight
-      updated[index].reps = previousSet.reps
-      setWorkoutSets(updated)
-    }
   }
 
   const handleDiscardProgress = () => {
@@ -397,8 +386,6 @@ export default function WorkoutPage() {
                     const absoluteIndex = workoutSets.findIndex(
                       s => s.exerciseName === set.exerciseName && s.setNumber === set.setNumber
                     )
-                    const previousSet = getPreviousSetData(set.exerciseName, set.setNumber)
-
                     return (
                       <div
                         key={setIndex}
@@ -432,11 +419,7 @@ export default function WorkoutPage() {
 
                             <div className="space-y-3 mb-3">
                               <div>
-                                <label className="block text-xs text-zinc-600 mb-1">
-                                  Reps {previousSet && (
-                                    <span className="text-cyan-600">(Last: {previousSet.reps})</span>
-                                  )}
-                                </label>
+                                <label className="block text-xs text-zinc-600 mb-1">Reps</label>
                                 <div className="flex items-center gap-2 w-full">
                                   <button
                                     type="button"
@@ -463,11 +446,7 @@ export default function WorkoutPage() {
                                 </div>
                               </div>
                               <div>
-                                <label className="block text-xs text-zinc-600 mb-1">
-                                  Weight (kg/lbs) {previousSet && (
-                                    <span className="text-cyan-600">(Last: {previousSet.weight})</span>
-                                  )}
-                                </label>
+                                <label className="block text-xs text-zinc-600 mb-1">Weight (kg/lbs)</label>
                                 <div className="flex items-center gap-2 w-full">
                                   <button
                                     type="button"
@@ -496,15 +475,6 @@ export default function WorkoutPage() {
                               </div>
                             </div>
 
-                            {previousSet && (
-                              <button
-                                type="button"
-                                onClick={() => copyPreviousWeight(absoluteIndex, set.exerciseName, set.setNumber)}
-                                className="w-full text-xs bg-cyan-100 text-cyan-700 px-3 py-2 rounded hover:bg-cyan-200 transition"
-                              >
-                                Copy Last
-                              </button>
-                            )}
                           </div>
                         </div>
                       </div>
