@@ -50,6 +50,28 @@ export default function WorkoutPage() {
   const [hasResumedProgress, setHasResumedProgress] = useState(false)
   const [workoutStartTime, setWorkoutStartTime] = useState<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
+  const [restEnd, setRestEnd] = useState<number | null>(null)
+  // Recomputed each render; the elapsed-time interval re-renders every second
+  const restRemaining = restEnd ? Math.max(0, Math.ceil((restEnd - Date.now()) / 1000)) : 0
+  const restKey = `workout-rest-${params.programId}`
+
+  // Restore rest timer so it survives closing/reopening the app
+  useEffect(() => {
+    const saved = localStorage.getItem(restKey)
+    if (saved) setRestEnd(parseInt(saved))
+  }, [restKey])
+
+  const startRest = (end: number | null) => {
+    setRestEnd(end)
+    if (end) localStorage.setItem(restKey, end.toString())
+    else localStorage.removeItem(restKey)
+  }
+
+  // Vibrate when rest ends (no-op on iOS Safari, which lacks the Vibration API)
+  const restDone = restEnd !== null && restRemaining === 0
+  useEffect(() => {
+    if (restDone) navigator.vibrate?.([300, 150, 300])
+  }, [restDone])
 
   // Initialize workout start time
   useEffect(() => {
@@ -207,6 +229,7 @@ export default function WorkoutPage() {
     const updated = [...workoutSets]
     updated[index].completed = !updated[index].completed
     setWorkoutSets(updated)
+    if (updated[index].completed) startRest(Date.now() + 2 * 60 * 1000)
   }
 
   const handleDiscardProgress = () => {
@@ -214,6 +237,7 @@ export default function WorkoutPage() {
       localStorage.removeItem(`workout-progress-${params.programId}`)
       localStorage.removeItem(`workout-start-${params.programId}`)
       setHasResumedProgress(false)
+      startRest(null)
       // Reset timer
       const now = Date.now()
       setWorkoutStartTime(now)
@@ -240,6 +264,7 @@ export default function WorkoutPage() {
       if (shouldDiscard) {
         localStorage.removeItem(`workout-progress-${params.programId}`)
         localStorage.removeItem(`workout-start-${params.programId}`)
+        localStorage.removeItem(restKey)
       }
     }
 
@@ -274,6 +299,7 @@ export default function WorkoutPage() {
         // Clear saved progress and timer after successful save
         localStorage.removeItem(`workout-progress-${params.programId}`)
         localStorage.removeItem(`workout-start-${params.programId}`)
+        localStorage.removeItem(restKey)
         router.push("/dashboard")
       } else {
         alert("Failed to save workout")
@@ -319,6 +345,18 @@ export default function WorkoutPage() {
               <span className="text-lg font-semibold tabular-nums">
                 {formatTime(elapsedTime)}
               </span>
+              {restEnd && (
+                <button
+                  type="button"
+                  onClick={() => startRest(null)}
+                  title="Dismiss rest timer"
+                  className={`ml-4 px-3 py-0.5 rounded-full text-sm font-semibold tabular-nums ${
+                    restRemaining > 0 ? 'bg-white/20' : 'bg-green-500 animate-pulse'
+                  }`}
+                >
+                  {restRemaining > 0 ? `Rest ${formatTime(restRemaining)}` : 'Rest over – go!'} ✕
+                </button>
+              )}
             </div>
           </div>
         </div>
